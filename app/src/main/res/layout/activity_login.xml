@@ -9,6 +9,15 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.sabersoft.ishannarula.meet.LoginActivity">
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_alignTop="@+id/emailField"
+        android:layout_centerHorizontal="true"
+        android:indeterminate="false" />
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,4 +58,5 @@
         android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="30dp"/>
+
 </RelativeLayout>
