@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.sabersoft.ishannarula.meet.objects.User;
 
 public class SignupActivity extends AppCompatActivity {
@@ -30,7 +31,7 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        
+
         Firebase.setAndroidContext(this);
         final Firebase users = new Firebase("https://meet-2332f.firebaseio.com/users");
         final FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -65,9 +66,14 @@ public class SignupActivity extends AppCompatActivity {
                         progress.setVisibility(View.INVISIBLE);
 
                         if (task.isSuccessful()){
+
                             Toast.makeText(getApplicationContext(), "Account created!", Toast.LENGTH_LONG).show();
                             User newUser = new User(firstName, lastName, phoneNumber, email);
-                            users.push().setValue(newUser);
+
+                            FirebaseUser currentUser = auth.getCurrentUser();
+                            String id = currentUser.getUid();
+                            users.child(id).setValue(newUser);
+
                         }
 
                         else
