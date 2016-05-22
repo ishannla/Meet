@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.firebase.client.Firebase;
+
 public class SignupActivity extends AppCompatActivity {
 
     EditText firstnameField;
