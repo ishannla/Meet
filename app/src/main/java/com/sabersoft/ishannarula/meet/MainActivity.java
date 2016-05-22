@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.location.LocationListener;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -52,12 +53,17 @@ public class MainActivity extends AppCompatActivity {
 
     LocationManager locationManager;
     LocationListener locationListener;
-    static double latitude;
-    static double longitude;
+
+    double latitude;
+    double longitude;
+    LatLng currentLocation;
     int counter;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+
+    Firebase locations;
+    String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +82,11 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         Firebase.setAndroidContext(this);
-        Firebase locations = new Firebase("https://meet-2332f.firebaseio.com/locations");
+        locations = new Firebase("https://meet-2332f.firebaseio.com/locations");
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
-        String id = currentUser.getUid();
+        id = currentUser.getUid();
 
         getLocation();
 
@@ -161,16 +167,21 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+
         if (MapFragment.mapFragment != null) {
             MapFragment.mapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
-                    LatLng variable = new LatLng(MainActivity.latitude, MainActivity.longitude);
+                    LatLng variable = new LatLng(latitude, longitude);
                     MapFragment.mMap.addMarker(new MarkerOptions().position(variable).title("Current location"));
                     MapFragment.mMap.moveCamera(CameraUpdateFactory.newLatLng(variable));
                 }
             });
         }
+
+        currentLocation = new LatLng(latitude, longitude);
+        locations.child(id).setValue(currentLocation);
+
     }
 
 

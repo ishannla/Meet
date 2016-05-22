@@ -3,10 +3,10 @@ package com.sabersoft.ishannarula.meet.objects;
 
 public class User {
 
-    String firstName;
-    String lastName;
-    String phoneNumber;
-    String email;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
+    private String email;
 
     public User(String firstName, String lastName, String phoneNumber, String email){
         this.firstName = firstName;
