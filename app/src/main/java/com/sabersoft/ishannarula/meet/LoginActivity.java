@@ -53,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailField.getText().toString();
                 String password = passwordField.getText().toString();
 
+                //if login does not actually occur, update Google Play Services on device
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {

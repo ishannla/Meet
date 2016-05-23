@@ -95,35 +95,28 @@ public class MainActivity extends AppCompatActivity {
     public void getLocation() {
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
         locationListener = new LocationListener() {
 
             @Override
             public void onLocationChanged(Location location) {
-                updateLocation(locationManager, locationListener);
+
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+
+                updateMapAndFirebase();
             }
 
             @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-                if (status == 2)
-                    updateLocation(locationManager, locationListener);
-            }
+            public void onStatusChanged(String provider, int status, Bundle extras) { }
 
             @Override
-            public void onProviderEnabled(String provider) {
-            }
+            public void onProviderEnabled(String provider) { }
 
             @Override
-            public void onProviderDisabled(String provider) {
-            }
+            public void onProviderDisabled(String provider) { }
+
         };
-
-        updateLocation(locationManager, locationListener);
-
-    }
-
-    private void updateLocation(LocationManager locationManager, LocationListener locationListener) {
-
-        Location location;
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Please grant the application location access!", Toast.LENGTH_LONG).show();
@@ -132,42 +125,27 @@ public class MainActivity extends AppCompatActivity {
 
         else {
 
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            String provider = locationManager.getBestProvider(criteria, true);
 
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            locationManager.requestLocationUpdates(provider, 1000, 0.1f, locationListener);
+            Location location = locationManager.getLastKnownLocation(provider);
 
-                if (location == null)
-                    Toast.makeText(this, "GPS Location null", Toast.LENGTH_LONG).show();
+            if (location == null)
+                Toast.makeText(this, "GPS Location null", Toast.LENGTH_LONG).show();
 
-                else {
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                    Toast.makeText(this, "G - Latitude: " + latitude + ", Longitude: " + longitude + " (" + counter + ")", Toast.LENGTH_SHORT).show();
-                    counter++;
-                }
+            else {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
             }
-
-            else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-                if (location == null)
-                    Toast.makeText(this, "Network Location null", Toast.LENGTH_LONG).show();
-
-                else {
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                    Toast toast = Toast.makeText(this, "N - Latitude: " + latitude + ", Longitude: " + longitude + " (" + counter + ")", Toast.LENGTH_LONG);
-                    toast.show();
-                    counter++;
-                }
-            }
-
         }
 
+        updateMapAndFirebase();
 
+    }
+
+    public void updateMapAndFirebase() {
         if (MapFragment.mapFragment != null) {
             MapFragment.mapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
@@ -181,9 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
         currentLocation = new LatLng(latitude, longitude);
         locations.child(id).setValue(currentLocation);
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

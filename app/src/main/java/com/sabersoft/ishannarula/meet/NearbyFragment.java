@@ -1,6 +1,7 @@
 package com.sabersoft.ishannarula.meet;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,18 +31,22 @@ import java.util.Map;
 public class NearbyFragment extends Fragment {
 
     TextView locationText;
+    Button friendButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootview = inflater.inflate(R.layout.fragment_nearby, container, false);
 
         locationText = (TextView) rootview.findViewById(R.id.locationText);
+        friendButton = (Button) rootview.findViewById(R.id.friendButton);
 
         Firebase.setAndroidContext(getActivity());
+
         FirebaseAuth auth = FirebaseAuth.getInstance();
         final String id = auth.getCurrentUser().getUid();
 
         Firebase userLocation = new Firebase("https://meet-2332f.firebaseio.com/locations").child(id);
+        Toast.makeText(getActivity(), id, Toast.LENGTH_LONG).show();
 
         userLocation.addValueEventListener(new ValueEventListener() {
             @Override
@@ -54,6 +59,14 @@ public class NearbyFragment extends Fragment {
             @Override
             public void onCancelled(FirebaseError firebaseError) {
                 Toast.makeText(getActivity(), "An error has occured.", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        friendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), FriendsActivity.class);
+                startActivity(intent);
             }
         });
 
