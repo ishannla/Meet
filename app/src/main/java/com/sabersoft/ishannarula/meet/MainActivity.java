@@ -45,8 +45,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.sabersoft.ishannarula.meet.objects.Coordinates;
 
 import java.util.Map;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -54,9 +56,10 @@ public class MainActivity extends AppCompatActivity {
     LocationManager locationManager;
     LocationListener locationListener;
 
+    Coordinates currentLocation;
     double latitude;
     double longitude;
-    LatLng currentLocation;
+
     int counter;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -133,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             Location location = locationManager.getLastKnownLocation(provider);
 
             if (location == null)
-                Toast.makeText(this, "GPS Location null", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "GPS Coordinates null", Toast.LENGTH_LONG).show();
 
             else {
                 latitude = location.getLatitude();
@@ -146,6 +149,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateMapAndFirebase() {
+
+        counter++;
         if (MapFragment.mapFragment != null) {
             MapFragment.mapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
@@ -157,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        currentLocation = new LatLng(latitude, longitude);
+        currentLocation = new Coordinates(latitude, longitude, counter);
         locations.child(id).setValue(currentLocation);
     }
 
@@ -177,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
